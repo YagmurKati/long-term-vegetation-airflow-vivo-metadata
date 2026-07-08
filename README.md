@@ -118,6 +118,8 @@ By default the collector uses a fixed carbon-intensity factor. To record the act
 
 The free tier is rate-limited (about 50 requests per hour, one zone), which is plenty for occasional collection. Without a token, collection still works and falls back to the fixed factor.
 
+The intensity is pulled for the workflow's run window at the moment you run the collector, so collect soon after a run to reflect the real grid conditions. The free tier covers recent data only; retrieving intensity for older, specific past times requires a paid ElectricityMaps plan.
+
 ## What the output contains
 
 Each file has three main parts:

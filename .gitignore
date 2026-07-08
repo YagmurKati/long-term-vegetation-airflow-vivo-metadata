@@ -1,0 +1,13 @@
+# Never commit real cluster secrets
+config.yml
+wg0.conf
+wireguard.conf
+*.kubeconfig
+
+# Python
+__pycache__/
+*.pyc
+
+# Local generated output
+claudttl/
+VIVO_UPLOAD_FILES.txt

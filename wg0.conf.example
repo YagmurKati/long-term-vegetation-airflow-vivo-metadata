@@ -1,0 +1,13 @@
+# Example WireGuard config. Do NOT commit your real wg0.conf.
+# Get the real values from the FONDA admin, save them as wg0.conf (which is gitignored).
+
+[Interface]
+PrivateKey = <your-private-key>
+Address = <your-vpn-ip>/32
+DNS = <dns-server>
+
+[Peer]
+PublicKey = <server-public-key>
+Endpoint = <server-host>:<port>
+AllowedIPs = <cluster-cidr>
+PersistentKeepalive = 25

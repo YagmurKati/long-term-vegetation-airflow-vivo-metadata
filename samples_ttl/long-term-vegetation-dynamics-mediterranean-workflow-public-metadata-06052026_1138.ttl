@@ -1,0 +1,295 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rm: <http://example.org/ontology/run-metadata#> .
+@prefix ex: <http://example.org/vivo-import/run-metadata/> .
+@prefix fonda: <https://fonda.hu-berlin.de/ontology#> .
+
+rm:Workflow
+  rdf:type rdfs:Class ;
+  rdfs:label "Workflow"@en .
+
+rm:WorkflowProcessRun
+  rdf:type rdfs:Class ;
+  rdfs:label "workflow stage run"@en .
+
+rm:ComputeCluster
+  rdf:type rdfs:Class ;
+  rdfs:label "Compute Cluster"@en .
+
+rm:hasWorkflowProcess
+  rdf:type rdf:Property ;
+  rdfs:label "workflow stages"@en .
+
+rm:workflow
+  rdf:type rdf:Property ;
+  rdfs:label "workflow name"@en .
+
+rm:computeCluster
+  rdf:type rdf:Property ;
+  rdfs:label "compute cluster"@en .
+
+rm:traceArchive
+  rdf:type rdf:Property ;
+  rdfs:label "trace archive"@en .
+
+rm:traceTypes
+  rdf:type rdf:Property ;
+  rdfs:label "trace types"@en .
+
+rm:traceDataFormat
+  rdf:type rdf:Property ;
+  rdfs:label "trace data format"@en .
+
+rm:isWorkflowProcessOf
+  rdf:type rdf:Property ;
+  rdfs:label "stage of workflow"@en .
+
+rm:carbonIntensitySource
+  rdf:type rdf:Property ;
+  rdfs:label "carbon intensity source"@en .
+
+rm:responsibleResearcher
+  rdf:type rdf:Property ;
+  rdfs:label "responsible researcher"@en .
+
+rm:ApplicationDomain
+  rdf:type rdfs:Class ;
+  rdfs:label "Application domain"@en .
+
+rm:applicationDomain
+  rdf:type rdf:Property ;
+  rdfs:label "application domain"@en .
+
+rm:WorkflowEngine
+  rdf:type rdfs:Class ;
+  rdfs:label "Workflow Engine"@en .
+
+rm:Language
+  rdf:type rdfs:Class ;
+  rdfs:label "Language"@en .
+
+<http://example.org/vivo-import/run-metadata/engine/apache-airflow>
+  rdf:type rm:WorkflowEngine ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "Apache Airflow"@en ;
+  dcterms:title "Apache Airflow"@en .
+
+<http://example.org/vivo-import/run-metadata/language/python>
+  rdf:type rm:Language ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "Python"@en ;
+  dcterms:title "Python"@en .
+
+<http://example.org/vivo-import/run-metadata/cluster/fonda-cluster>
+  rdf:type rm:ComputeCluster ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "Fonda Cluster"@en ;
+  dcterms:title "Fonda Cluster"@en ;
+  rm:hasRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> .
+
+<http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean>
+  rdf:type rm:Workflow ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Long-term vegetation dynamics in the Mediterranean (Airflow)"@en ;
+  dcterms:title "Long-term vegetation dynamics in the Mediterranean (Airflow)"@en ;
+  rm:workflowName "Long-term vegetation dynamics in the Mediterranean (Airflow)" ;
+  rm:workflowCodeLink "https://github.com/CRC-FONDA/fonda-airflow-dags/blob/main/dags/s1/force/workflow.py"^^xsd:anyURI ;
+  rm:workflowUiLink "http://127.0.0.1:8080/dags/force-1/grid"^^xsd:anyURI ;
+  rm:traceArchive "https://box.hu-berlin.de/f/c4d90fc5b07c4955b979/"^^xsd:anyURI ;
+  rm:traceTypes "Airflow Logs, Force logs" ;
+  rm:traceDataFormat "Zipped text files" ;
+  rm:responsibleResearcher <https://fonda.hu-berlin.de/?page_id=2066#VasilisBountris> ;
+  rm:applicationDomain <http://172.28.33.178:8080/vivo/individual/n5261> ;
+  rm:describesSoftwareExecution <http://141.20.184.157:8080/vivo/individual/a1-publication-doi-10-1093-gigascience-giae030> ;
+  rm:hasRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> ;
+  rm:hasWorkflowRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> .
+
+<http://141.20.184.157:8080/vivo/individual/a1-publication-doi-10-1093-gigascience-giae030>
+  rm:hasRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> .
+
+<http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00>
+  rdf:type rm:RunMetadata ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Execution metadata · 06 May 2026, 11:38–12:20 CEST"@en ;
+  dcterms:title "Execution metadata · 06 May 2026, 11:38–12:20 CEST"@en ;
+  rm:describesSoftwareExecution <http://141.20.184.157:8080/vivo/individual/a1-publication-doi-10-1093-gigascience-giae030> ;
+  rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean> ;
+  rm:computeCluster <http://example.org/vivo-import/run-metadata/cluster/fonda-cluster> ;
+  rm:codeVersion "sha256:15c8de907e29393e43d77726c0965317490a408dbed84af5cb5075df200181d3" ;
+  rm:runStatus "Succeeded" ;
+  rm:workflowEngine <http://example.org/vivo-import/run-metadata/engine/apache-airflow> ;
+  rm:language <http://example.org/vivo-import/run-metadata/language/python> ;
+  rm:backend "Kubernetes" ;
+  rm:startTime "2026-05-06T11:38:03"^^xsd:dateTime ;
+  rm:endTime "2026-05-06T12:20:54"^^xsd:dateTime ;
+  rm:durationSeconds "2570"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock elapsed time from the earliest task start to the latest task end across all 76 task(s) in this workflow run." ;
+  dcterms:created "2026-05-12T16:06:27+02:00"^^xsd:dateTime ;
+  rm:jobName "force-1" ;
+  rm:cpuTimeSeconds "14183.65765732246"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "Sum of Prometheus container_cpu_usage_seconds_total across all workflow task pods (75 pod(s) / 76 task(s)) over the workflow window using increase() for 50 pod(s) and max_over_time() fallback for 25 pod(s) where increase() returned zero. Because tasks run in parallel, total CPU time can exceed wall-clock duration." ;
+  rm:memoryPeakGB "27.50568448"^^xsd:double ;
+  rm:memoryAvgGB "11.171691869364706"^^xsd:double ;
+  rm:energyKWh "1.2016397124497125"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "0.20788367025380025"^^xsd:double ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.173"^^xsd:double ;
+  rm:carbonIntensitySource "electricitymap-latest" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy collected from Prometheus using Kepler metric 'kepler_container_joules_total'. Per-pod counter increases were used where available; avg_over_time was used as a fallback for pods with insufficient scrape points." ;
+  rm:energyCalculationUsesFallbackEstimate "true"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions were calculated using the emissions factor method: energy consumption (kWh) multiplied by the carbon intensity factor (0.173 kg CO2e/kWh)." ;
+  rm:gpuRequested "false"^^xsd:boolean ;
+  rm:gpuMetricsAvailable "false"^^xsd:boolean ;
+  rm:gpuCapableNodeUsed "false"^^xsd:boolean ;
+  rm:gpuUsageStatus "CPU-only workflow run" ;
+  rm:containerImage "davidfrantz/force:3.6.5" ;
+  rm:containerImage "docker.io/davidfrantz/force:3.6.5" ;
+  rm:containerImage "docker.io/library/alpine:latest" ;
+  rm:containerImage "alpine" ;
+  rm:executionHost "hu-worker-c24" ;
+  rm:nodeName "hu-worker-c24" ;
+  rm:allocatableCpu "32" ;
+  rm:allocatableMemoryGB "269.784072192"^^xsd:double ;
+  rm:architecture "amd64" ;
+  rm:kernelVersion "5.15.0-177-generic" ;
+  rm:kubeletVersion "v1.27.7" ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-level2-preprocessing-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-39-54-627803-00-00> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-time-series-analysis-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t10-04-29-948632-00-00> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-pyramid-generation-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t10-04-53-927603-00-00> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-mosaic-generation-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t10-19-20-779829-00-00> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-workflow-overhead-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-22-343425-00-00> ;
+  rm:workflowCodeLink "https://github.com/YagmurKati/fonda-airflow-dags/blob/codex/yagmur-airflow-import-fix/dags/s1/force/workflow.py"^^xsd:anyURI ;
+  rm:workflowUiLink "http://127.0.0.1:8080/dags/force-1/grid"^^xsd:anyURI ;
+  rm:osImage "Ubuntu 22.04.4 LTS" .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-level2-preprocessing-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-39-54-627803-00-00>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Level-2 preprocessing"@en ;
+  dcterms:title "Level-2 preprocessing"@en ;
+  rm:jobName "Level-2 preprocessing" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "16"^^xsd:integer ;
+  rm:podCount "16"^^xsd:integer ;
+  rm:startTime "2026-05-06T11:39:54"^^xsd:dateTime ;
+  rm:endTime "2026-05-06T12:03:46"^^xsd:dateTime ;
+  rm:durationSeconds "1432"^^xsd:integer ;
+  rm:cpuTimeSeconds "10889.62892994058"^^xsd:double ;
+  rm:memoryPeakGB "27.81407232"^^xsd:double ;
+  rm:memoryAvgGB "17.673451214978723"^^xsd:double ;
+  rm:energyKWh "0.03605287795401126"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "0.006237147886043948"^^xsd:double ;
+  rm:carbonCalculationMethod "Carbon emissions were calculated using the emissions factor method: energy consumption (kWh) multiplied by the carbon intensity factor (0.173 kg CO2e/kWh)." ;
+  rm:energyCalculationMethod "Energy collected from Prometheus using Kepler metric 'kepler_container_joules_total' as the sum of per-pod counter increases across 16 pod(s) (16 task(s))." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.173"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "Sum of Prometheus container_cpu_usage_seconds_total across 16 pod(s) (16 task(s)) using increase() over the workflow window." ;
+  rm:durationCalculationMethod "Wall-clock elapsed time from the earliest task start to the latest task end across 16 task(s) in this group." ;
+  rm:parallelismNote "Tasks in this group run in parallel, so CPU time is the total work done across all 16 pod(s) while duration is the compressed wall-clock window. CPU time will exceed duration whenever more than one task runs simultaneously." .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-time-series-analysis-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t10-04-29-948632-00-00>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Time-series analysis"@en ;
+  dcterms:title "Time-series analysis"@en ;
+  rm:jobName "Time-series analysis" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "4"^^xsd:integer ;
+  rm:podCount "4"^^xsd:integer ;
+  rm:startTime "2026-05-06T12:04:29"^^xsd:dateTime ;
+  rm:endTime "2026-05-06T12:18:44"^^xsd:dateTime ;
+  rm:durationSeconds "854"^^xsd:integer ;
+  rm:cpuTimeSeconds "3246.6456203818816"^^xsd:double ;
+  rm:memoryPeakGB "2.779971584"^^xsd:double ;
+  rm:memoryAvgGB "2.301934445714286"^^xsd:double ;
+  rm:energyKWh "0.016518417829034394"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "0.00285768628442295"^^xsd:double ;
+  rm:carbonCalculationMethod "Carbon emissions were calculated using the emissions factor method: energy consumption (kWh) multiplied by the carbon intensity factor (0.173 kg CO2e/kWh)." ;
+  rm:energyCalculationMethod "Energy collected from Prometheus using Kepler metric 'kepler_container_joules_total' across 4 pod(s) (4 task(s)). Per-pod counter increases were used where available; avg_over_time was used as a fallback for pods with insufficient scrape points." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.173"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "Sum of Prometheus container_cpu_usage_seconds_total across 4 pod(s) (4 task(s)) using increase() for 3 pod(s); max_over_time() fallback for 1 pod(s) where increase() returned zero." ;
+  rm:durationCalculationMethod "Wall-clock elapsed time from the earliest task start to the latest task end across 4 task(s) in this group." ;
+  rm:parallelismNote "Tasks in this group run in parallel, so CPU time is the total work done across all 4 pod(s) while duration is the compressed wall-clock window. CPU time will exceed duration whenever more than one task runs simultaneously." .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-pyramid-generation-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t10-04-53-927603-00-00>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Pyramid generation"@en ;
+  dcterms:title "Pyramid generation"@en ;
+  rm:jobName "Pyramid generation" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "40"^^xsd:integer ;
+  rm:podCount "40"^^xsd:integer ;
+  rm:startTime "2026-05-06T12:04:53"^^xsd:dateTime ;
+  rm:endTime "2026-05-06T12:20:54"^^xsd:dateTime ;
+  rm:durationSeconds "960"^^xsd:integer ;
+  rm:cpuTimeSeconds "0.741385"^^xsd:double ;
+  rm:memoryPeakGB "0.024834048"^^xsd:double ;
+  rm:memoryAvgGB "0.013050624"^^xsd:double ;
+  rm:energyKWh "0.5065641333333334"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "0.08763559506666667"^^xsd:double ;
+  rm:carbonCalculationMethod "Carbon emissions were calculated using the emissions factor method: energy consumption (kWh) multiplied by the carbon intensity factor (0.173 kg CO2e/kWh)." ;
+  rm:energyCalculationMethod "Energy collected from Prometheus using Kepler metric 'kepler_container_joules_total' across 40 pod(s) (40 task(s)). Per-pod counter increases were used where available; avg_over_time was used as a fallback for pods with insufficient scrape points." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.173"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "Sum of Prometheus container_cpu_usage_seconds_total across 40 pod(s) (40 task(s)) using increase() for 22 pod(s); max_over_time() fallback for 18 pod(s) where increase() returned zero." ;
+  rm:durationCalculationMethod "Wall-clock elapsed time from the earliest task start to the latest task end across 40 task(s) in this group." ;
+  rm:parallelismNote "Tasks in this group run in parallel, so CPU time is the total work done across all 40 pod(s) while duration is the compressed wall-clock window. CPU time will exceed duration whenever more than one task runs simultaneously." .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-mosaic-generation-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t10-19-20-779829-00-00>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Mosaic generation"@en ;
+  dcterms:title "Mosaic generation"@en ;
+  rm:jobName "Mosaic generation" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "10"^^xsd:integer ;
+  rm:podCount "10"^^xsd:integer ;
+  rm:startTime "2026-05-06T12:19:20"^^xsd:dateTime ;
+  rm:endTime "2026-05-06T12:20:08"^^xsd:dateTime ;
+  rm:durationSeconds "47"^^xsd:integer ;
+  rm:cpuTimeSeconds "0.261841"^^xsd:double ;
+  rm:memoryPeakGB "0.0116736"^^xsd:double ;
+  rm:memoryAvgGB "0.0116736"^^xsd:double ;
+  rm:energyKWh "0.014490516666666665"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "0.0025068593833333327"^^xsd:double ;
+  rm:carbonCalculationMethod "Carbon emissions were calculated using the emissions factor method: energy consumption (kWh) multiplied by the carbon intensity factor (0.173 kg CO2e/kWh)." ;
+  rm:energyCalculationMethod "Energy collected from Prometheus using Kepler metric 'kepler_container_joules_total' across 10 pod(s) (10 task(s)). Per-pod counter increases were used where available; avg_over_time was used as a fallback for pods with insufficient scrape points." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.173"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "Sum of Prometheus container_cpu_usage_seconds_total across 10 pod(s) (10 task(s)) using increase() for 5 pod(s); max_over_time() fallback for 5 pod(s) where increase() returned zero." ;
+  rm:durationCalculationMethod "Wall-clock elapsed time from the earliest task start to the latest task end across 10 task(s) in this group." ;
+  rm:parallelismNote "Tasks in this group run in parallel, so CPU time is the total work done across all 10 pod(s) while duration is the compressed wall-clock window. CPU time will exceed duration whenever more than one task runs simultaneously." .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-workflow-overhead-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-22-343425-00-00>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Workflow overhead"@en ;
+  dcterms:title "Workflow overhead"@en ;
+  rm:jobName "Workflow overhead" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "5"^^xsd:integer ;
+  rm:podCount "5"^^xsd:integer ;
+  rm:startTime "2026-05-06T11:38:22"^^xsd:dateTime ;
+  rm:endTime "2026-05-06T12:19:10"^^xsd:dateTime ;
+  rm:durationSeconds "2447"^^xsd:integer ;
+  rm:cpuTimeSeconds "46.379881000000005"^^xsd:double ;
+  rm:memoryPeakGB "0.328687616"^^xsd:double ;
+  rm:memoryAvgGB "0.1565179123809524"^^xsd:double ;
+  rm:energyKWh "0.6280137666666666"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "0.10864638163333332"^^xsd:double ;
+  rm:carbonCalculationMethod "Carbon emissions were calculated using the emissions factor method: energy consumption (kWh) multiplied by the carbon intensity factor (0.173 kg CO2e/kWh)." ;
+  rm:energyCalculationMethod "Energy collected from Prometheus using Kepler metric 'kepler_container_joules_total' across 5 pod(s) (5 task(s)). Per-pod counter increases were used where available; avg_over_time was used as a fallback for pods with insufficient scrape points." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.173"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "Sum of Prometheus container_cpu_usage_seconds_total across 5 pod(s) (5 task(s)) using increase() for 4 pod(s); max_over_time() fallback for 1 pod(s) where increase() returned zero." ;
+  rm:durationCalculationMethod "Wall-clock elapsed time from the earliest task start to the latest task end across 5 task(s) in this group." ;
+  rm:parallelismNote "Tasks in this group run in parallel, so CPU time is the total work done across all 5 pod(s) while duration is the compressed wall-clock window. CPU time will exceed duration whenever more than one task runs simultaneously." .

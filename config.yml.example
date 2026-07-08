@@ -1,0 +1,22 @@
+# Example kubeconfig. Do NOT commit your real config.yml.
+# Get the real file from the FONDA admin, save it as config.yml (which is gitignored),
+# then: export KUBECONFIG=$(pwd)/config.yml
+
+apiVersion: v1
+kind: Config
+clusters:
+  - name: fonda
+    cluster:
+      server: https://<cluster-api-host>:<port>
+      certificate-authority-data: <base64-ca-cert>
+users:
+  - name: fonda-user
+    user:
+      client-certificate-data: <base64-client-cert>
+      client-key-data: <base64-client-key>
+contexts:
+  - name: fonda
+    context:
+      cluster: fonda
+      user: fonda-user
+current-context: fonda

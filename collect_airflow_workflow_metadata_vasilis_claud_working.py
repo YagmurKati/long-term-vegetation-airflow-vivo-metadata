@@ -1038,7 +1038,7 @@ def build_args() -> argparse.Namespace:
     parser.add_argument("--carbon-intensity", type=float, default=CARBON_INTENSITY_DEFAULT)
     parser.add_argument(
         "--electricitymap-token",
-        default=os.environ.get("ELECTRICITYMAP_TOKEN", "dPnOScEsmerLLvMDgXOD"),
+        default=os.environ.get("ELECTRICITYMAP_TOKEN"),
         help="ElectricityMaps API token (overrides ELECTRICITYMAP_TOKEN env var). "
              "When set, the actual carbon intensity over the workflow execution window "
              "is fetched from the ElectricityMaps history API and used instead of "

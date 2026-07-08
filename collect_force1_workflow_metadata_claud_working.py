@@ -28,7 +28,7 @@ DEFAULT_TRACE_TYPES = "Airflow Logs, Force logs"
 DEFAULT_TRACE_DATA_FORMAT = "Zipped text files"
 DEFAULT_RESPONSIBLE_RESEARCHER_URI = "https://fonda.hu-berlin.de/?page_id=2066#VasilisBountris"
 DEFAULT_APPLICATION_DOMAIN_URI = "http://172.28.33.178:8080/vivo/individual/n5261"
-DEFAULT_ELECTRICITYMAP_TOKEN = "dPnOScEsmerLLvMDgXOD"
+DEFAULT_ELECTRICITYMAP_TOKEN = None
 DEFAULT_WORKFLOW_UI_BASE_URL = "http://127.0.0.1:8080"
 VERSIONED_OUTPUT_STEM = "long-term-vegetation-dynamics-mediterranean-workflow-public-metadata-with-processes"
 TIMESTAMPED_OUTPUT_STEM = "long-term-vegetation-dynamics-mediterranean-workflow-public-metadata"

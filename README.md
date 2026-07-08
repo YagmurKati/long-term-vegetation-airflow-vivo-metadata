@@ -105,6 +105,19 @@ The `samples_ttl/` folder contains example output for two runs so you can compar
 
 `--dag-id force-1` selects a different DAG.
 
+## Carbon intensity token (optional)
+
+By default the collector uses a fixed carbon-intensity factor. To record the actual intensity over the run window instead, it can query the ElectricityMaps API, which needs a personal token. No token ships with this repository; each user brings their own.
+
+1. Sign up for the free tier at the ElectricityMaps API Portal (https://portal.electricitymaps.com) and copy your API key from the API access page.
+2. Set it as an environment variable in the terminal where you run the collector:
+
+   ```
+   export ELECTRICITYMAP_TOKEN=<your-token>
+   ```
+
+The free tier is rate-limited (about 50 requests per hour, one zone), which is plenty for occasional collection. Without a token, collection still works and falls back to the fixed factor.
+
 ## What the output contains
 
 Each file has three main parts:

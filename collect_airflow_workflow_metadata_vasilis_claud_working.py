@@ -1020,6 +1020,15 @@ def build_args() -> argparse.Namespace:
         help="Slug used in the compute cluster URI (e.g. fonda-cluster)",
     )
     parser.add_argument(
+        "--backend-uri",
+        default="http://172.28.33.178:8080/vivo/individual/n5703",
+        help=(
+            "URI of the Backend individual (default: Kubernetes). rm:backend is "
+            "an object property in VIVO, so a URI is emitted instead of a literal. "
+            "Pass an empty string to omit."
+        ),
+    )
+    parser.add_argument(
         "--workflow-ui-base-url",
         default="http://127.0.0.1:8080",
         help="Base URL used to construct a workflow UI link, for example a local Airflow port-forward URL",
@@ -1284,6 +1293,7 @@ def main() -> None:
     cluster_uri = f"<{base_uri}cluster/{args.cluster_slug}>"
     engine_uri = f"<{base_uri}engine/{slugify(args.workflow_engine)}>"
     language_uri = f"<{base_uri}language/{slugify(args.language)}>" if args.language else None
+    backend_uri = as_ttl_uri(args.backend_uri) if getattr(args, "backend_uri", None) else None
     total_max_over_time_count = sum(1 for q in cpu_queries.values() if q and "max_over_time" in q)
     overall_cpu_method = summarize_overall_cpu_method(len(tasks), len(pod_names), total_max_over_time_count)
     overall_duration_method = summarize_overall_duration_method(len(tasks))
@@ -1424,76 +1434,19 @@ def main() -> None:
         f"@prefix ex: <{base_uri}> .",
         "@prefix fonda: <https://fonda.hu-berlin.de/ontology#> .",
         "",
-        "rm:Workflow",
-        "  rdf:type rdfs:Class ;",
-        f"  rdfs:label {ttl_literal('Workflow')}@en .",
-        "",
-        "rm:WorkflowProcessRun",
-        "  rdf:type rdfs:Class ;",
-        f"  rdfs:label {ttl_literal('workflow stage run')}@en .",
-        "",
-        "rm:ComputeCluster",
-        "  rdf:type rdfs:Class ;",
-        f"  rdfs:label {ttl_literal('Compute Cluster')}@en .",
-        "",
-        "rm:hasWorkflowProcess",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('workflow stages')}@en .",
-        "",
-        "rm:workflow",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('workflow name')}@en .",
-        "",
-        "rm:computeCluster",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('compute cluster')}@en .",
-        "",
-        "rm:traceArchive",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('trace archive')}@en .",
-        "",
-        "rm:traceTypes",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('trace types')}@en .",
-        "",
-        "rm:traceDataFormat",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('trace data format')}@en .",
-        "",
-        "rm:responsibleResearcher",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('responsible researcher')}@en .",
-        "",
-        "rm:ApplicationDomain",
-        "  rdf:type rdfs:Class ;",
-        f"  rdfs:label {ttl_literal('Application domain')}@en .",
-        "",
-        "rm:applicationDomain",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('application domain')}@en .",
-        "",
-        "rm:isWorkflowProcessOf",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('stage of workflow')}@en .",
-        "",
-        "rm:carbonIntensitySource",
-        "  rdf:type rdf:Property ;",
-        f"  rdfs:label {ttl_literal('carbon intensity source')}@en .",
-        "",
-        "rm:WorkflowEngine",
-        "  rdf:type rdfs:Class ;",
-        f"  rdfs:label {ttl_literal('Workflow Engine')}@en .",
-        "",
-        "rm:Language",
-        "  rdf:type rdfs:Class ;",
-        f"  rdfs:label {ttl_literal('Language')}@en .",
-        "",
+        # NOTE 2026-07-30: the inline ontology declarations (rm:Workflow,
+        # rm:hasWorkflow, rm:responsibleResearcher, ... as rdfs:Class /
+        # rdf:Property with @en labels) were REMOVED. Those classes and
+        # properties are defined in VIVO's TBox; re-declaring them here wrote
+        # generic duplicates into vitro-kb-2, which VIVO rendered as extra
+        # empty property sections on every workflow page. Do not re-add them.
         # --- Workflow engine entity ---
         f"{engine_uri}",
         "  rdf:type rm:WorkflowEngine ;",
         "  rdf:type vivo:InformationResource ;",
         f"  rdfs:label {ttl_literal(args.workflow_engine)}@en ;",
-        f"  dcterms:title {ttl_literal(args.workflow_engine)}@en .",
+        f"  dcterms:title {ttl_literal(args.workflow_engine)}@en ;",
+        f"  rm:hasWorkflow {workflow_entity_uri} .",
         "",
         # --- Language entity ---
         *(
@@ -1502,10 +1455,21 @@ def main() -> None:
                 "  rdf:type rm:Language ;",
                 "  rdf:type vivo:InformationResource ;",
                 f"  rdfs:label {ttl_literal(args.language)}@en ;",
-                f"  dcterms:title {ttl_literal(args.language)}@en .",
+                f"  dcterms:title {ttl_literal(args.language)}@en ;",
+                # reverse link -> language page's "workflows" list
+                f"  rm:hasWorkflow {workflow_entity_uri} .",
                 "",
             ]
             if language_uri else []
+        ),
+        # --- Backend entity (rm:backend is an object property, range Backend) ---
+        *(
+            [
+                f"{backend_uri}",
+                f"  rm:hasWorkflow {workflow_entity_uri} .",
+                "",
+            ]
+            if backend_uri else []
         ),
         # --- Cluster entity ---
         f"{cluster_uri}",
@@ -1513,7 +1477,8 @@ def main() -> None:
         "  rdf:type vivo:InformationResource ;",
         f"  rdfs:label {ttl_literal(args.cluster_label)}@en ;",
         f"  dcterms:title {ttl_literal(args.cluster_label)}@en ;",
-        f"  rm:hasRun {run_uri} .",
+        f"  rm:hasRun {run_uri} ;",
+        f"  rm:hasWorkflow {workflow_entity_uri} .",
         "",
         # --- Workflow entity ---
         f"{workflow_entity_uri}",
@@ -1523,6 +1488,12 @@ def main() -> None:
         f"  rdfs:label {ttl_literal(public_workflow_name or workflow_name)}@en ;",
         f"  dcterms:title {ttl_literal(public_workflow_name or workflow_name)}@en ;",
         f"  rm:workflowName {ttl_literal(public_workflow_name or workflow_name)} ;",
+        # Execution Environment on the WORKFLOW individual (union domain
+        # Workflow OR Workflow Run in VIVO)
+        f"  rm:workflowEngine {engine_uri} ;",
+        f"  rm:computeCluster {cluster_uri} ;",
+        *([f"  rm:language {language_uri} ;"] if language_uri else []),
+        *([f"  rm:backend {backend_uri} ;"] if backend_uri else []),
     ]
     if args.code_uri:
         ttl_lines.append(f"  rm:workflowCodeLink {ttl_literal(args.code_uri, 'xsd:anyURI')} ;")
@@ -1559,12 +1530,15 @@ def main() -> None:
         f"  rm:computeCluster {cluster_uri} ;",
         f"  rm:codeVersion {ttl_literal(code_version)} ;",
         f"  rm:runStatus {ttl_literal(normalize_state(effective_state))} ;",
+        # engine also belongs on the run (restored 2026-07-30)
         f"  rm:workflowEngine {engine_uri} ;",
         *(
             [f"  rm:language {language_uri} ;"]
             if language_uri else []
         ),
-        f"  rm:backend {ttl_literal(backend)} ;",
+        # rm:backend is an OBJECT property in VIVO (range Backend) -> emit a
+        # URI, not the detected literal. The detected value is still printed.
+        *([f"  rm:backend {backend_uri} ;"] if backend_uri else []),
         f"  rm:startTime {ttl_literal(run_start_local_naive, 'xsd:dateTime')} ;",
         f"  rm:endTime {ttl_literal(run_end_local_naive, 'xsd:dateTime')} ;",
         f"  rm:durationSeconds {ttl_literal(duration_s, 'xsd:integer')} ;",

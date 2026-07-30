@@ -216,6 +216,11 @@ def build_args() -> argparse.Namespace:
     parser.add_argument("--cluster-label", default="Fonda Cluster")
     parser.add_argument("--cluster-slug", default="fonda-cluster")
     parser.add_argument(
+        "--backend-uri",
+        default="http://172.28.33.178:8080/vivo/individual/n5703",
+        help="Backend individual URI passed to the collector (default: Kubernetes)",
+    )
+    parser.add_argument(
         "--language",
         default=None,
         help="Programming language of the workflow (auto-detected from code-path if not set)",
@@ -301,6 +306,8 @@ def main() -> None:
                 args.cluster_label,
                 "--cluster-slug",
                 args.cluster_slug,
+                "--backend-uri",
+                args.backend_uri,
                 "--language",
                 language,
             ]
@@ -366,6 +373,8 @@ def main() -> None:
         args.cluster_label,
         "--cluster-slug",
         args.cluster_slug,
+        "--backend-uri",
+        args.backend_uri,
         "--language",
         language,
     ]

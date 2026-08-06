@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this repository to collect VIVO metadata, cite this helper repository. If you run or cite the FORCE-on-Airflow workflow or its scientific results, cite the upstream workflow and the FORCE software listed in the references."
+title: "Long-term Vegetation Dynamics (Airflow) VIVO Metadata"
+type: software
+authors:
+  - family-names: Kati
+    given-names: Yagmur
+repository-code: "https://github.com/YagmurKati/long-term-vegetation-airflow-vivo-metadata"
+url: "https://github.com/YagmurKati/long-term-vegetation-airflow-vivo-metadata"
+date-released: 2026-08-05
+license: MIT
+abstract: "Helper scripts and documentation for collecting Airflow, Kubernetes, Prometheus, energy, carbon, and input-dataset metadata from finished FORCE-on-Airflow workflow runs, and exporting it as VIVO-ready Turtle. This repository does not contain the workflow itself; the Airflow DAG lives in the upstream repository."
+keywords:
+  - VIVO
+  - metadata
+  - provenance
+  - Airflow
+  - Kubernetes
+  - FORCE
+  - Earth observation
+references:
+  - type: software
+    title: "fonda-airflow-dags"
+    authors:
+      - name: "CRC-FONDA"
+    repository-code: "https://github.com/CRC-FONDA/fonda-airflow-dags"
+    url: "https://github.com/CRC-FONDA/fonda-airflow-dags"
+  - type: article
+    title: "FORCE—Landsat + Sentinel-2 Analysis Ready Data and Beyond"
+    authors:
+      - family-names: Frantz
+        given-names: David
+    year: 2019
+    journal: "Remote Sensing"
+    volume: 11
+    issue: 9
+    start: 1124
+    doi: "10.3390/rs11091124"
+    url: "https://doi.org/10.3390/rs11091124"

@@ -9,88 +9,30 @@
 @prefix ex: <http://example.org/vivo-import/run-metadata/> .
 @prefix fonda: <https://fonda.hu-berlin.de/ontology#> .
 
-rm:Workflow
-  rdf:type rdfs:Class ;
-  rdfs:label "Workflow"@en .
-
-rm:WorkflowProcessRun
-  rdf:type rdfs:Class ;
-  rdfs:label "workflow stage run"@en .
-
-rm:ComputeCluster
-  rdf:type rdfs:Class ;
-  rdfs:label "Compute Cluster"@en .
-
-rm:hasWorkflowProcess
-  rdf:type rdf:Property ;
-  rdfs:label "workflow stages"@en .
-
-rm:workflow
-  rdf:type rdf:Property ;
-  rdfs:label "workflow name"@en .
-
-rm:computeCluster
-  rdf:type rdf:Property ;
-  rdfs:label "compute cluster"@en .
-
-rm:traceArchive
-  rdf:type rdf:Property ;
-  rdfs:label "trace archive"@en .
-
-rm:traceTypes
-  rdf:type rdf:Property ;
-  rdfs:label "trace types"@en .
-
-rm:traceDataFormat
-  rdf:type rdf:Property ;
-  rdfs:label "trace data format"@en .
-
-rm:isWorkflowProcessOf
-  rdf:type rdf:Property ;
-  rdfs:label "stage of workflow"@en .
-
-rm:carbonIntensitySource
-  rdf:type rdf:Property ;
-  rdfs:label "carbon intensity source"@en .
-
-rm:responsibleResearcher
-  rdf:type rdf:Property ;
-  rdfs:label "responsible researcher"@en .
-
-rm:ApplicationDomain
-  rdf:type rdfs:Class ;
-  rdfs:label "Application domain"@en .
-
-rm:applicationDomain
-  rdf:type rdf:Property ;
-  rdfs:label "application domain"@en .
-
-rm:WorkflowEngine
-  rdf:type rdfs:Class ;
-  rdfs:label "Workflow Engine"@en .
-
-rm:Language
-  rdf:type rdfs:Class ;
-  rdfs:label "Language"@en .
-
 <http://example.org/vivo-import/run-metadata/engine/apache-airflow>
   rdf:type rm:WorkflowEngine ;
   rdf:type vivo:InformationResource ;
   rdfs:label "Apache Airflow"@en ;
-  dcterms:title "Apache Airflow"@en .
+  dcterms:title "Apache Airflow"@en ;
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean> .
 
 <http://example.org/vivo-import/run-metadata/language/python>
   rdf:type rm:Language ;
   rdf:type vivo:InformationResource ;
   rdfs:label "Python"@en ;
-  dcterms:title "Python"@en .
+  dcterms:title "Python"@en ;
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean> .
+
+<http://172.28.33.178:8080/vivo/individual/n5703>
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean> .
 
 <http://example.org/vivo-import/run-metadata/cluster/fonda-cluster>
   rdf:type rm:ComputeCluster ;
   rdf:type vivo:InformationResource ;
   rdfs:label "Fonda Cluster"@en ;
   dcterms:title "Fonda Cluster"@en ;
-  rm:hasRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> .
+  rm:hasRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> ;
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean> .
 
 <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean>
   rdf:type rm:Workflow ;
@@ -99,13 +41,16 @@ rm:Language
   rdfs:label "Long-term vegetation dynamics in the Mediterranean (Airflow)"@en ;
   dcterms:title "Long-term vegetation dynamics in the Mediterranean (Airflow)"@en ;
   rm:workflowName "Long-term vegetation dynamics in the Mediterranean (Airflow)" ;
+  rm:workflowEngine <http://example.org/vivo-import/run-metadata/engine/apache-airflow> ;
+  rm:computeCluster <http://example.org/vivo-import/run-metadata/cluster/fonda-cluster> ;
+  rm:language <http://example.org/vivo-import/run-metadata/language/python> ;
+  rm:backend <http://172.28.33.178:8080/vivo/individual/n5703> ;
   rm:workflowCodeLink "https://github.com/CRC-FONDA/fonda-airflow-dags/blob/main/dags/s1/force/workflow.py"^^xsd:anyURI ;
   rm:workflowUiLink "http://127.0.0.1:8080/dags/force-1/grid"^^xsd:anyURI ;
   rm:traceArchive "https://box.hu-berlin.de/f/c4d90fc5b07c4955b979/"^^xsd:anyURI ;
-  rm:traceTypes "Airflow Logs, Force logs" ;
-  rm:traceDataFormat "Zipped text files" ;
   rm:responsibleResearcher <https://fonda.hu-berlin.de/?page_id=2066#VasilisBountris> ;
   rm:applicationDomain <http://172.28.33.178:8080/vivo/individual/n5261> ;
+  rm:hasUsedInputData <http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-full> ;
   rm:describesSoftwareExecution <http://141.20.184.157:8080/vivo/individual/a1-publication-doi-10-1093-gigascience-giae030> ;
   rm:hasRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> ;
   rm:hasWorkflowRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> .
@@ -117,8 +62,8 @@ rm:Language
   rdf:type rm:RunMetadata ;
   rdf:type vivo:InformationResource ;
   rdf:type prov:Entity ;
-  rdfs:label "Execution metadata · 06 May 2026, 11:38–12:20 CEST"@en ;
-  dcterms:title "Execution metadata · 06 May 2026, 11:38–12:20 CEST"@en ;
+  rdfs:label "Long-term vegetation dynamics in the Mediterranean (Airflow) · run 2026-05-06 11:38–12:20 CEST"@en ;
+  dcterms:title "Long-term vegetation dynamics in the Mediterranean (Airflow) · run 2026-05-06 11:38–12:20 CEST"@en ;
   rm:describesSoftwareExecution <http://141.20.184.157:8080/vivo/individual/a1-publication-doi-10-1093-gigascience-giae030> ;
   rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean> ;
   rm:computeCluster <http://example.org/vivo-import/run-metadata/cluster/fonda-cluster> ;
@@ -126,7 +71,7 @@ rm:Language
   rm:runStatus "Succeeded" ;
   rm:workflowEngine <http://example.org/vivo-import/run-metadata/engine/apache-airflow> ;
   rm:language <http://example.org/vivo-import/run-metadata/language/python> ;
-  rm:backend "Kubernetes" ;
+  rm:backend <http://172.28.33.178:8080/vivo/individual/n5703> ;
   rm:startTime "2026-05-06T11:38:03"^^xsd:dateTime ;
   rm:endTime "2026-05-06T12:20:54"^^xsd:dateTime ;
   rm:durationSeconds "2570"^^xsd:integer ;
@@ -167,7 +112,32 @@ rm:Language
   rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-workflow-overhead-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-22-343425-00-00> ;
   rm:workflowCodeLink "https://github.com/YagmurKati/fonda-airflow-dags/blob/codex/yagmur-airflow-import-fix/dags/s1/force/workflow.py"^^xsd:anyURI ;
   rm:workflowUiLink "http://127.0.0.1:8080/dags/force-1/grid"^^xsd:anyURI ;
+  rm:inputData <http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-reduced-20260506> ;
   rm:osImage "Ubuntu 22.04.4 LTS" .
+
+<http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-full>
+  rdf:type rm:InputDataset ;
+  rdfs:label "Full EO-01 input collection for Long-term vegetation dynamics in the Mediterranean (Airflow)"@en ;
+  dcterms:description "The complete input collection expected by the original Airflow FORCE workflow. The upstream workflow configuration is designed for 2,794 Level-1 queue records and 28 FORCE tiles. It combines satellite Level-1 scenes with the AOI, datacube definition, DEM, water-vapour database, and spectral endmember inputs."@en ;
+  rm:accessInstructionsURL "https://github.com/CRC-FONDA/fonda-airflow-dags/blob/main/dags/s1/force/download-data.py"^^xsd:anyURI ;
+  rm:upstreamSourceURL "https://box.hu-berlin.de/f/c4d90fc5b07c4955b979/?dl=1"^^xsd:anyURI ;
+  rm:formatDocumentationURL "https://force-eo.readthedocs.io/en/stable/components/lower-level/level2/param.html"^^xsd:anyURI ;
+  rm:storageLocation "FONDA Kubernetes persistent storage: dataset PVC fonda-datasets at /data/input/b5/eo-01; source queue and auxiliary inputs on PVC force-airflow at /data/outputs/queue.txt and /data/outputs/auxillary_data" ;
+  rm:accessStatement "The repository download workflow retrieves the AOI, grid, DEM, water-vapour database, and endmember archive from HU Box and uses FORCE force-level1-csd to construct the Level-1 data pool and queue. The complete retained collection is not currently published as a checksum-addressed public snapshot."@en ;
+  rm:inputDataOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean> .
+
+<http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-reduced-20260506>
+  rdf:type rm:InputDataset ;
+  rdfs:label "Reduced Airflow example input selection (16 queue records, 4 tiles; 6 May 2026)"@en ;
+  dcterms:description "Reduced selection used intentionally by the documented example runs to shorten execution time. The run code selected the first 16 records from the full source queue and the first four FORCE tiles generated from the AOI. All other input preparation and processing settings remained tied to the full EO-01 input collection."@en ;
+  dcterms:isPartOf <http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-full> ;
+  rm:accessInstructionsURL "https://github.com/YagmurKati/fonda-airflow-dags/blob/codex/yagmur-airflow-import-fix/dags/s1/force/workflow.py"^^xsd:anyURI ;
+  rm:accessInstructionsURL "https://github.com/CRC-FONDA/fonda-airflow-dags/blob/main/dags/s1/force/download-data.py"^^xsd:anyURI ;
+  rm:upstreamSourceURL "https://box.hu-berlin.de/f/c4d90fc5b07c4955b979/?dl=1"^^xsd:anyURI ;
+  rm:formatDocumentationURL "https://force-eo.readthedocs.io/en/stable/components/lower-level/level2/param.html"^^xsd:anyURI ;
+  rm:storageLocation "Run selection on FONDA Kubernetes PVC force-airflow: source queue /data/outputs/queue.txt; selected queue /data/outputs/force-benchmark-run/queue.txt; selected tiles /data/outputs/force-benchmark-run/allowed_tiles.txt" ;
+  rm:accessStatement "The documented 6 May 2026 example runs used this reduced selection. The repositories document the deterministic selection rule (first 16 queue records and first four generated tiles), but they do not publish the selected scene identifiers, tile identifiers, or a checksum manifest for the retained files."@en ;
+  rm:usedByWorkflowRun <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-38-03-582823-00-00> .
 
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-level2-preprocessing-manual-2026-05-06t08-55-57-785616-00-00-2026-05-06t09-39-54-627803-00-00>
   rdf:type rm:WorkflowProcessRun ;

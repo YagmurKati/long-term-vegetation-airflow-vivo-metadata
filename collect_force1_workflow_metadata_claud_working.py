@@ -221,9 +221,22 @@ def build_args() -> argparse.Namespace:
         help="Backend individual URI passed to the collector (default: Kubernetes)",
     )
     parser.add_argument(
+        "--workflow-repo-url",
+        default="https://github.com/YagmurKati/fonda-airflow-dags",
+        help="Repo the DAG file belongs to; used to build the commit link",
+    )
+    parser.add_argument(
         "--language",
         default=None,
         help="Programming language of the workflow (auto-detected from code-path if not set)",
+    )
+    parser.add_argument(
+        "--input-metadata-file",
+        default=str(here / "input_datasets.json"),
+        help=(
+            "JSON file describing the full workflow input collection and the "
+            "run-specific selection; pass an empty string to omit input metadata"
+        ),
     )
     parser.add_argument(
         "--electricitymap-token",
@@ -311,6 +324,8 @@ def main() -> None:
                 "--language",
                 language,
             ]
+            if args.input_metadata_file:
+                cmd += ["--input-metadata-file", args.input_metadata_file]
             if args.trace_types:
                 cmd += ["--trace-types", args.trace_types]
             if args.trace_data_format:
@@ -375,9 +390,13 @@ def main() -> None:
         args.cluster_slug,
         "--backend-uri",
         args.backend_uri,
+        "--workflow-repo-url",
+        args.workflow_repo_url,
         "--language",
         language,
     ]
+    if args.input_metadata_file:
+        cmd += ["--input-metadata-file", args.input_metadata_file]
     if args.trace_types:
         cmd += ["--trace-types", args.trace_types]
     if args.trace_data_format:

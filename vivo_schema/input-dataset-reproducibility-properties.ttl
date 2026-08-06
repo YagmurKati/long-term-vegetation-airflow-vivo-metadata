@@ -1,0 +1,43 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rm: <http://example.org/ontology/run-metadata#> .
+
+# Generic properties for any workflow input dataset.
+
+rm:accessInstructionsURL
+  rdf:type owl:DatatypeProperty ;
+  rdfs:label "access and preparation instructions"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range xsd:anyURI .
+
+rm:checksumManifestURL
+  rdf:type owl:DatatypeProperty ;
+  rdfs:label "checksum manifest"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range xsd:anyURI .
+
+rm:upstreamSourceURL
+  rdf:type owl:DatatypeProperty ;
+  rdfs:label "upstream data source"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range xsd:anyURI .
+
+rm:formatDocumentationURL
+  rdf:type owl:DatatypeProperty ;
+  rdfs:label "input format documentation"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range xsd:anyURI .
+
+rm:storageLocation
+  rdf:type owl:DatatypeProperty ;
+  rdfs:label "storage location"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range xsd:string .
+
+rm:accessStatement
+  rdf:type owl:DatatypeProperty ;
+  rdfs:label "access statement"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range xsd:string .

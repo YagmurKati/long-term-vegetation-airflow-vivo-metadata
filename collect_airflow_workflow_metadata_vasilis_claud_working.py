@@ -4,6 +4,7 @@ import json
 import os
 import re
 import shlex
+import subprocess
 import sys
 import urllib.error
 import urllib.request
@@ -49,6 +50,45 @@ GPU_RESOURCE_REGEX = re.compile(r'["\'](nvidia\.com/gpu|amd\.com/gpu|gpu)["\']\s
 SLURM_HINTS = ("slurm", "sbatch", "srun", "squeue")
 
 
+def git_commit_for_file(code_path: str) -> Tuple[Optional[str], bool]:
+    """Return (commit, file_is_modified) for the DAG file at code_path.
+
+    Uses the last commit that touched THAT FILE (not repo HEAD), so the value
+    stays correct when unrelated files were committed afterwards. Returns
+    (None, False) when the file is not inside a git working tree.
+    """
+    path = os.path.abspath(code_path)
+    directory = path if os.path.isdir(path) else os.path.dirname(path)
+    def _git(*args: str) -> Optional[str]:
+        try:
+            out = subprocess.run(
+                ["git", "-C", directory, *args],
+                capture_output=True, text=True, check=True,
+            )
+            return out.stdout.strip()
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            return None
+    if _git("rev-parse", "--is-inside-work-tree") != "true":
+        return None, False
+    commit = _git("log", "-1", "--format=%H", "--", path) or None
+    modified = bool(_git("status", "--porcelain", "--", path))
+    return commit, modified
+
+
+def commit_url(repo_url: Optional[str], commit: Optional[str]) -> Optional[str]:
+    """Build a clickable commit URL (GitHub/GitLab). None if not derivable."""
+    if not repo_url or not commit:
+        return None
+    url = repo_url.strip().rstrip("/")
+    if url.endswith(".git"):
+        url = url[: -len(".git")]
+    if "github.com" in url:
+        return f"{url}/commit/{commit}"
+    if "gitlab" in url:
+        return f"{url}/-/commit/{commit}"
+    return None
+
+
 def normalize_state(state: Optional[str]) -> str:
     mapping = {
         "success": "Succeeded",
@@ -70,6 +110,76 @@ def normalize_state(state: Optional[str]) -> str:
 
 def split_csv(value: str) -> List[str]:
     return [part.strip() for part in value.split(",") if part.strip()]
+
+
+def load_input_metadata(path: Optional[str]) -> Dict[str, Dict[str, Any]]:
+    if not path:
+        return {}
+
+    with open(path, "r", encoding="utf-8") as handle:
+        data = json.load(handle)
+
+    if not isinstance(data, dict):
+        raise RuntimeError("Input metadata configuration must be a JSON object")
+
+    for key in ("workflow_dataset", "run_dataset"):
+        dataset = data.get(key)
+        if dataset is None:
+            continue
+        if not isinstance(dataset, dict):
+            raise RuntimeError(f"Input metadata '{key}' must be a JSON object")
+        missing = [field for field in ("uri", "label") if not dataset.get(field)]
+        if missing:
+            raise RuntimeError(
+                f"Input metadata '{key}' is missing required field(s): {', '.join(missing)}"
+            )
+
+    return data
+
+
+def render_ttl_subject(subject: str, predicates: Sequence[Tuple[str, str]]) -> List[str]:
+    lines = [subject]
+    for index, (predicate, value) in enumerate(predicates):
+        terminator = "." if index == len(predicates) - 1 else ";"
+        lines.append(f"  {predicate} {value} {terminator}")
+    return lines
+
+
+def render_input_dataset(
+    dataset: Dict[str, Any],
+    relation_predicate: str,
+    relation_uri: str,
+) -> List[str]:
+    predicates: List[Tuple[str, str]] = [
+        ("rdf:type", "rm:InputDataset"),
+        ("rdfs:label", f"{ttl_literal(dataset['label'])}@en"),
+    ]
+    if dataset.get("description"):
+        predicates.append(
+            ("dcterms:description", f"{ttl_literal(dataset['description'])}@en")
+        )
+    if dataset.get("is_part_of"):
+        predicates.append(("dcterms:isPartOf", as_ttl_uri(dataset["is_part_of"])))
+
+    url_properties = (
+        ("access_instructions_urls", "rm:accessInstructionsURL"),
+        ("checksum_manifest_urls", "rm:checksumManifestURL"),
+        ("upstream_source_urls", "rm:upstreamSourceURL"),
+        ("format_documentation_urls", "rm:formatDocumentationURL"),
+    )
+    for config_key, predicate in url_properties:
+        for url in dataset.get(config_key, []):
+            predicates.append((predicate, ttl_literal(url, "xsd:anyURI")))
+
+    if dataset.get("storage_location"):
+        predicates.append(("rm:storageLocation", ttl_literal(dataset["storage_location"])))
+    if dataset.get("access_statement"):
+        predicates.append(
+            ("rm:accessStatement", f"{ttl_literal(dataset['access_statement'])}@en")
+        )
+    predicates.append((relation_predicate, relation_uri))
+
+    return render_ttl_subject(as_ttl_uri(dataset["uri"]), predicates)
 
 
 def looks_like_publication_uri(uri: Optional[str]) -> bool:
@@ -1020,6 +1130,15 @@ def build_args() -> argparse.Namespace:
         help="Slug used in the compute cluster URI (e.g. fonda-cluster)",
     )
     parser.add_argument(
+        "--workflow-repo-url",
+        default="https://github.com/YagmurKati/fonda-airflow-dags",
+        help=(
+            "Repository the DAG file belongs to; combined with the git commit "
+            "to emit rm:codeCommitLink. Must be the repo/fork the deployed code "
+            "was pushed to. Pass an empty string to omit."
+        ),
+    )
+    parser.add_argument(
         "--backend-uri",
         default="http://172.28.33.178:8080/vivo/individual/n5703",
         help=(
@@ -1069,6 +1188,14 @@ def build_args() -> argparse.Namespace:
         default=None,
         help="Programming language of the workflow (e.g. Python, R, Snakemake)",
     )
+    parser.add_argument(
+        "--input-metadata-file",
+        default=None,
+        help=(
+            "Optional JSON configuration describing the full workflow input dataset "
+            "and the run-specific input selection"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -1098,6 +1225,9 @@ def derive_run_state(tasks: List[Dict[str, Any]], fallback_state: str) -> str:
 
 def main() -> None:
     args = build_args()
+    input_metadata = load_input_metadata(args.input_metadata_file)
+    workflow_input_dataset = input_metadata.get("workflow_dataset")
+    run_input_dataset = input_metadata.get("run_dataset")
     ensure_prometheus_reachable(args.prom_url)
     metric_names = prom_metric_names(args.prom_url)
     detected_energy_metric = find_energy_metric(metric_names)
@@ -1270,6 +1400,20 @@ def main() -> None:
     energy_method, energy_method_uses_fallback = summarize_energy_method(detected_energy_metric, energy_queries)
     carbon_method = summarize_carbon_method(args.carbon_intensity, energy_kwh is not None)
     code_version = f"sha256:{sha256_file(args.code_path)}"
+    # Git provenance for the DAG file. The commit is only emitted when the
+    # local file matches it; a modified file means the commit does not
+    # describe what ran, so nothing is emitted rather than something wrong.
+    git_commit, git_file_modified = git_commit_for_file(args.code_path)
+    git_commit_link = None
+    if git_commit and git_file_modified:
+        print(
+            f"WARNING: {args.code_path} has uncommitted changes - "
+            "skipping git commit metadata for this run",
+            file=sys.stderr,
+        )
+        git_commit = None
+    elif git_commit:
+        git_commit_link = commit_url(args.workflow_repo_url, git_commit)
     effective_state = derive_run_state(tasks, run_record["state"])
     workflow_name = args.workflow_name or args.code_name or args.dag_id
     public_workflow_name = args.code_name
@@ -1509,6 +1653,10 @@ def main() -> None:
         ttl_lines.append(f"  rm:responsibleResearcher {as_ttl_uri(args.responsible_researcher_uri)} ;")
     if args.application_domain_uri:
         ttl_lines.append(f"  rm:applicationDomain {as_ttl_uri(args.application_domain_uri)} ;")
+    if workflow_input_dataset:
+        ttl_lines.append(
+            f"  rm:hasUsedInputData {as_ttl_uri(workflow_input_dataset['uri'])} ;"
+        )
     ttl_lines.extend([
         f"  rm:describesSoftwareExecution {software_uri} ;",
         f"  rm:hasRun {run_uri} ;",
@@ -1529,6 +1677,11 @@ def main() -> None:
         f"  rm:workflow {workflow_entity_uri} ;",
         f"  rm:computeCluster {cluster_uri} ;",
         f"  rm:codeVersion {ttl_literal(code_version)} ;",
+        *([f"  rm:gitCommit {ttl_literal(git_commit)} ;"] if git_commit else []),
+        *(
+            [f"  rm:codeCommitLink {ttl_literal(git_commit_link, 'xsd:anyURI')} ;"]
+            if git_commit_link else []
+        ),
         f"  rm:runStatus {ttl_literal(normalize_state(effective_state))} ;",
         # engine also belongs on the run (restored 2026-07-30)
         f"  rm:workflowEngine {engine_uri} ;",
@@ -1573,8 +1726,8 @@ def main() -> None:
         ttl_lines.append(f"  rm:containerImage {ttl_literal(image)} ;")
     for host in execution_hosts:
         ttl_lines.append(f"  rm:executionHost {ttl_literal(host)} ;")
-    for node_name in unique_nodes:
-        ttl_lines.append(f"  rm:nodeName {ttl_literal(node_name)} ;")
+    # rm:nodeName dropped 2026-08-05: duplicated rm:executionHost
+    # value-for-value and was never declared in VIVO.
     for value in allocatable_cpus:
         ttl_lines.append(f"  rm:allocatableCpu {ttl_literal(value)} ;")
     for value in allocatable_mem_gbs:
@@ -1595,9 +1748,24 @@ def main() -> None:
         ttl_lines.append(f"  rm:workflowCodeLink {ttl_literal(args.code_uri, 'xsd:anyURI')} ;")
     if workflow_ui_link:
         ttl_lines.append(f"  rm:workflowUiLink {ttl_literal(workflow_ui_link, 'xsd:anyURI')} ;")
+    if run_input_dataset:
+        ttl_lines.append(f"  rm:inputData {as_ttl_uri(run_input_dataset['uri'])} ;")
 
     last_os_image = os_images[-1] if os_images else ""
     ttl_lines.append(f"  rm:osImage {ttl_literal(last_os_image)} .")
+
+    if workflow_input_dataset:
+        ttl_lines.extend([""] + render_input_dataset(
+            workflow_input_dataset,
+            "rm:inputDataOfWorkflow",
+            workflow_entity_uri,
+        ))
+    if run_input_dataset:
+        ttl_lines.extend([""] + render_input_dataset(
+            run_input_dataset,
+            "rm:usedByWorkflowRun",
+            run_uri,
+        ))
 
     for process in process_records:
         ttl_lines.extend([

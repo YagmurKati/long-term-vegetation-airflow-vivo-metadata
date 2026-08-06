@@ -1,0 +1,36 @@
+{
+  "workflow_dataset": {
+    "uri": "http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-full",
+    "label": "Full EO-01 input collection for Long-term vegetation dynamics in the Mediterranean (Airflow)",
+    "description": "The complete input collection expected by the original Airflow FORCE workflow. The upstream workflow configuration is designed for 2,794 Level-1 queue records and 28 FORCE tiles. It combines satellite Level-1 scenes with the AOI, datacube definition, DEM, water-vapour database, and spectral endmember inputs.",
+    "access_instructions_urls": [
+      "https://github.com/CRC-FONDA/fonda-airflow-dags/blob/main/dags/s1/force/download-data.py"
+    ],
+    "upstream_source_urls": [
+      "https://box.hu-berlin.de/f/c4d90fc5b07c4955b979/?dl=1"
+    ],
+    "format_documentation_urls": [
+      "https://force-eo.readthedocs.io/en/stable/components/lower-level/level2/param.html"
+    ],
+    "storage_location": "FONDA Kubernetes persistent storage: dataset PVC fonda-datasets at /data/input/b5/eo-01; source queue and auxiliary inputs on PVC force-airflow at /data/outputs/queue.txt and /data/outputs/auxillary_data",
+    "access_statement": "The repository download workflow retrieves the AOI, grid, DEM, water-vapour database, and endmember archive from HU Box and uses FORCE force-level1-csd to construct the Level-1 data pool and queue. The complete retained collection is not currently published as a checksum-addressed public snapshot."
+  },
+  "run_dataset": {
+    "uri": "http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-reduced-20260506",
+    "label": "Reduced Airflow example input selection (16 queue records, 4 tiles; 6 May 2026)",
+    "description": "Reduced selection used intentionally by the documented example runs to shorten execution time. The run code selected the first 16 records from the full source queue and the first four FORCE tiles generated from the AOI. All other input preparation and processing settings remained tied to the full EO-01 input collection.",
+    "is_part_of": "http://example.org/vivo-import/run-metadata/input-dataset/fonda-b5-eo-01-airflow-force-full",
+    "access_instructions_urls": [
+      "https://github.com/YagmurKati/fonda-airflow-dags/blob/codex/yagmur-airflow-import-fix/dags/s1/force/workflow.py",
+      "https://github.com/CRC-FONDA/fonda-airflow-dags/blob/main/dags/s1/force/download-data.py"
+    ],
+    "upstream_source_urls": [
+      "https://box.hu-berlin.de/f/c4d90fc5b07c4955b979/?dl=1"
+    ],
+    "format_documentation_urls": [
+      "https://force-eo.readthedocs.io/en/stable/components/lower-level/level2/param.html"
+    ],
+    "storage_location": "Run selection on FONDA Kubernetes PVC force-airflow: source queue /data/outputs/queue.txt; selected queue /data/outputs/force-benchmark-run/queue.txt; selected tiles /data/outputs/force-benchmark-run/allowed_tiles.txt",
+    "access_statement": "The documented 6 May 2026 example runs used this reduced selection. The repositories document the deterministic selection rule (first 16 queue records and first four generated tiles), but they do not publish the selected scene identifiers, tile identifiers, or a checksum manifest for the retained files."
+  }
+}

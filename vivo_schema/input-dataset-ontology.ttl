@@ -1,0 +1,40 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix rm: <http://example.org/ontology/run-metadata#> .
+
+# Import this schema file once. Import each input dataset with generated run metadata.
+
+rm:InputDataset
+  rdf:type owl:Class ;
+  rdfs:subClassOf vivo:InformationResource ;
+  rdfs:label "Input Dataset"@en .
+
+rm:inputData
+  rdf:type owl:ObjectProperty ;
+  rdfs:label "input data"@en ;
+  rdfs:domain rm:RunMetadata ;
+  rdfs:range rm:InputDataset ;
+  owl:inverseOf rm:usedByWorkflowRun .
+
+rm:usedByWorkflowRun
+  rdf:type owl:ObjectProperty ;
+  rdfs:label "workflow runs"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range rm:RunMetadata ;
+  owl:inverseOf rm:inputData .
+
+rm:hasUsedInputData
+  rdf:type owl:ObjectProperty ;
+  rdfs:label "input datasets used"@en ;
+  rdfs:domain rm:Workflow ;
+  rdfs:range rm:InputDataset ;
+  owl:inverseOf rm:inputDataOfWorkflow .
+
+rm:inputDataOfWorkflow
+  rdf:type owl:ObjectProperty ;
+  rdfs:label "workflow"@en ;
+  rdfs:domain rm:InputDataset ;
+  rdfs:range rm:Workflow ;
+  owl:inverseOf rm:hasUsedInputData .

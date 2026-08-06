@@ -1,6 +1,6 @@
 # FONDA workflow metadata collector
 
-These scripts collect metadata for a finished FORCE / Airflow workflow run and write a Turtle (`.ttl`) file you can upload to VIVO. The output describes the workflow, its execution runs, per-stage metrics (CPU, memory, energy, carbon), the trace archive, the responsible researcher, and the application domain.
+These scripts collect metadata for a finished FORCE / Airflow workflow run and write a Turtle (`.ttl`) file you can upload to VIVO. The output describes the workflow, its execution runs, per-stage metrics (CPU, memory, energy, carbon), input datasets, the trace archive, the responsible researcher, and the application domain.
 
 ## The two scripts
 
@@ -14,6 +14,7 @@ These scripts collect metadata for a finished FORCE / Airflow workflow run and w
 2. `kubectl` and WireGuard installed.
 3. Access to the FONDA cluster (see below).
 4. All three Python files in the same folder: the two above plus `collect_public_metadata_vasilis.py`, which the collector imports.
+5. `input_datasets.json`, which describes the complete EO-01 input collection and the reduced selection used by the documented example runs.
 
 ## Cluster access
 
@@ -81,6 +82,13 @@ Keep these running in their own terminals while you collect. Each terminal needs
 4. Find the output in the `claudttl/` subfolder, named like `long-term-vegetation-dynamics-mediterranean-workflow-public-metadata-06052026_1055.ttl`. The timestamp is the run's start time in Berlin time. A `VIVO_UPLOAD_FILES.txt` manifest lists everything written.
 5. Upload to VIVO: in the VIVO admin, go to Site Admin, then Add/Remove RDF Data, choose format Turtle, select Add, and upload the `.ttl` file. Reload the workflow page to see the result.
 
+Before importing generated run files into a new VIVO installation, import these schema files once:
+
+1. `vivo_schema/input-dataset-ontology.ttl`
+2. `vivo_schema/input-dataset-reproducibility-properties.ttl`
+
+The live FONDA VIVO already contains this schema. Do not re-import the schema for every run. Generated run TTLs contain only the input-dataset individuals and their links.
+
 The `samples_ttl/` folder contains example output for two runs so you can compare against your own.
 
 ## Common options
@@ -105,6 +113,19 @@ The `samples_ttl/` folder contains example output for two runs so you can compar
 
 `--dag-id force-1` selects a different DAG.
 
+`--input-metadata-file <path>` selects the JSON description of the workflow's full input collection and the run-specific selection. The wrapper defaults to this repository's `input_datasets.json`. Pass an empty string (`--input-metadata-file ""`) to omit input-dataset metadata.
+
+## Input dataset metadata
+
+The collector distinguishes two levels of input information:
+
+1. The workflow links to the complete input collection with `input datasets used` (`rm:hasUsedInputData`). This describes the original EO-01 configuration: 2,794 Level-1 queue records, 28 FORCE tiles, auxiliary inputs, the upstream HU Box source, and the repository procedure that prepares the data.
+2. Each workflow run links to its actual reduced selection with `input data` (`rm:inputData`). The two documented 6 May 2026 examples intentionally used the first 16 queue records and the first four generated tiles to reduce execution time.
+
+The input-dataset pages link to the exact workflow and download code, the upstream source, FORCE format documentation, and the cluster paths used by the runs. They also state an important provenance limitation: the retained selected scene identifiers and a checksum manifest are not currently published as a public snapshot.
+
+For a future run that uses a different queue subset, tiles, source collection, or auxiliary inputs, make a copy of `input_datasets.json` and update at least the run-dataset URI, label, description, access instructions, storage location, and access statement. Then pass that file with `--input-metadata-file`. Do not reuse the dated 6 May 2026 run dataset for a materially different input selection.
+
 ## Carbon intensity token (optional)
 
 By default the collector uses a fixed carbon-intensity factor. To record the actual intensity over the run window instead, it can query the ElectricityMaps API, which needs a personal token. No token ships with this repository; each user brings their own.
@@ -122,11 +143,12 @@ The intensity is pulled for the workflow's run window at the moment you run the 
 
 ## What the output contains
 
-Each file has three main parts:
+Each file has four main parts:
 
-1. The workflow individual, with name, code link, UI link, trace archive, trace types, trace data format, responsible researcher, and application domain.
-2. The run (execution metadata), with status, engine, language, cluster, timing, CPU, memory, energy, and carbon.
-3. One block per workflow stage (preprocessing, mosaic, pyramid, time-series, overhead) with its own metrics.
+1. The workflow individual, with name, code link, UI link, trace archive, trace types, trace data format, responsible researcher, application domain, and the complete input collection.
+2. The run (execution metadata), with status, engine, language, cluster, timing, CPU, memory, energy, carbon, and its run-specific input selection.
+3. The full and run-specific input-dataset individuals, with access, source, format, storage, and provenance information.
+4. One block per workflow stage (preprocessing, mosaic, pyramid, time-series, overhead) with its own metrics.
 
 ## Troubleshooting
 

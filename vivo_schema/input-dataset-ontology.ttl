@@ -20,10 +20,18 @@ rm:inputData
 
 rm:usedByWorkflowRun
   rdf:type owl:ObjectProperty ;
-  rdfs:label "workflow runs"@en ;
+  rdfs:label "used by workflow runs"@en ;
   rdfs:domain rm:InputDataset ;
   rdfs:range rm:RunMetadata ;
   owl:inverseOf rm:inputData .
+
+# Reverse of rm:language, so a Language page lists the runs that used it.
+rm:usedInWorkflowRun
+  rdf:type owl:ObjectProperty ;
+  rdfs:label "used in workflow runs"@en ;
+  rdfs:domain rm:Language ;
+  rdfs:range rm:RunMetadata ;
+  owl:inverseOf rm:language .
 
 rm:hasUsedInputData
   rdf:type owl:ObjectProperty ;

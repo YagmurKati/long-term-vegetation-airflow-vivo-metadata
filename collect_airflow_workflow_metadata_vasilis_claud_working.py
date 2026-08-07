@@ -1718,8 +1718,9 @@ def main() -> None:
     ttl_lines.append(f"  rm:energyCalculationUsesFallbackEstimate {ttl_bool(energy_method_uses_fallback)} ;")
     ttl_lines.append(f"  rm:carbonCalculationMethod {ttl_literal(carbon_method)} ;")
     ttl_lines.append(f"  rm:gpuRequested {ttl_bool(gpu_requested)} ;")
-    ttl_lines.append(f"  rm:gpuMetricsAvailable {ttl_bool(gpu_metric_available)} ;")
-    ttl_lines.append(f"  rm:gpuCapableNodeUsed {ttl_bool(gpu_capable_node_used)} ;")
+    # rm:gpuMetricsAvailable / rm:gpuCapableNodeUsed dropped 2026-08-06:
+    # collector diagnostics, never declared in VIVO. The values still feed
+    # classify_gpu_usage_status() below, which produces rm:gpuUsageStatus.
     ttl_lines.append(f"  rm:gpuUsageStatus {ttl_literal(gpu_usage_status)} ;")
 
     for image in unique_images:
